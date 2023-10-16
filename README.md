@@ -17,8 +17,8 @@ This project establishes communication between two Pico devices using the UART p
 ## Installation & Setup
 
 1. Connect the two Pico devices using UART pins (TX to RX and RX to TX).
-2. Load the `pico_1.py` script onto the first Pico device.
-3. Load the `pico_2.py` script onto the second Pico device.
+2. Load the `pico1.py` script onto the first Pico device.
+3. Load the `pico2.py` script onto the second Pico device.
 4. Power up both devices.
 
 ## Usage
