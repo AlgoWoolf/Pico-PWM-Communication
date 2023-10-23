@@ -2,26 +2,33 @@ import machine
 import utime
 import uos
 
-# Functionality Change 1: Using built-in PWM
-pwm_pin = machine.Pin(15) # Using pin 15 for PWM output
+pwm_pin = machine.Pin(15)
 pwm = machine.PWM(pwm_pin)
-pwm.freq(50) # Setting frequency to 50Hz
+pwm.freq(50)
 
-# Functionality Change 2: Initialize UART only once
 uart = machine.UART(1, baudrate=9600)
 
-def set_pwm_duty_cycle(duty_cycle):
+def set_pwm(duty_cycle, frequency=50):
+    pwm.freq(frequency)
     pwm.duty_u16(duty_cycle)
-    send_pwm_value(duty_cycle)
+    send_pwm_data(duty_cycle, frequency)
 
-def send_pwm_value(value):
-    # Functionality Change 3: Data Packaging
-    message = 'START' + str(value) + 'END'
+def send_pwm_data(value, frequency):
+    message = 'START:{}:{}END'.format(value, frequency)
     uart.write(message)
 
+def receive_feedback():
+    data = uart.read()
+    if data:
+        start_index = data.find(b'START')
+        end_index = data.find(b'END')
+        if start_index != -1 and end_index != -1:
+            feedback = data[start_index+5:end_index].decode()
+            print("Feedback Received:", feedback)
+
 # Example usage
-set_pwm_duty_cycle(32768) # 50% duty cycle for 16-bit resolution
+set_pwm(32768, 60)  # 50% duty cycle at 60Hz
 
 while True:
-    # This loop can be used for other tasks or to change PWM values over time
+    receive_feedback()
     utime.sleep(1)
