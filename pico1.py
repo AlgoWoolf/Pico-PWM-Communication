@@ -1,14 +1,15 @@
-import machine
+from machine import Pin, UART, PWM 
 import utime
 import uos
 
 # Configure the PWM pin and set its frequency
-pwm_pin = machine.Pin(15) # Define pin 15 as the PWM output pin.
-pwm = machine.PWM(pwm_pin) # Create a PWM object on pin 15.
+pwm_pin = Pin(15) # Define pin 15 as the PWM output pin.
+pwm = PWM(pwm_pin) # Create a PWM object on pin 15.
 pwm.freq(50) # Set the PWM frequency to 50Hz.
 
 # Configure UART
-uart = machine.UART(1, baudrate=9600) # Initialize UART 1 with a baud rate of 9600.
+uart = UART(1, baudrate=9600, tx=Pin(8), rx=Pin(9)) #Initialize UART 1 with a baud rate of 9600.
+uart.init(bits=8, parity=None, stop=1)
 
 # Function to set the PWM duty cycle and send the data via UART
 def set_pwm(duty_cycle, frequency=50):
@@ -32,8 +33,10 @@ def receive_feedback():
             print("Feedback Received:", feedback)
 
 # Example usage
-set_pwm(32768, 60)  # 50% duty cycle at 60Hz
+#set_pwm(32768, 60)  # 50% duty cycle at 60Hz
 
 while True:
+    set_pwm(32768, 60)
+    print("Receive")
     receive_feedback()
     utime.sleep(1)
